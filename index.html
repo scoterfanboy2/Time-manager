@@ -45,15 +45,35 @@
         }
 
         .task-item {
-            margin-bottom: 1rem;
-            padding: 1rem;
+            margin-bottom: 0.75rem;
+            padding: 0.75rem;
             border-radius: 0.5rem;
             background-color: #f8f9fa;
+            font-size: 0.9rem;
+        }
+
+        .task-item h5 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .task-item p {
+            margin-bottom: 0.5rem;
         }
 
         .task-time {
             color: #6c757d;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
+        }
+
+        .best-time {
+            color: #198754;
+            font-weight: bold;
+        }
+
+        .delete-btn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
         }
     </style>
 </head>
@@ -113,6 +133,7 @@
                 this.startTime = null;
                 this.timerInterval = null;
                 this.tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+                this.bestTimes = JSON.parse(localStorage.getItem('bestTimes')) || {};
 
                 this.taskForm = document.getElementById('taskForm');
                 this.taskNameInput = document.getElementById('taskName');
@@ -172,6 +193,13 @@
                 this.activeTask.endTime = new Date().toISOString();
                 this.activeTask.duration = new Date() - this.startTime;
 
+                // Update best time
+                const taskName = this.activeTask.name.toLowerCase().trim();
+                if (!this.bestTimes[taskName] || this.activeTask.duration < this.bestTimes[taskName]) {
+                    this.bestTimes[taskName] = this.activeTask.duration;
+                    localStorage.setItem('bestTimes', JSON.stringify(this.bestTimes));
+                }
+
                 this.tasks.unshift(this.activeTask);
                 localStorage.setItem('tasks', JSON.stringify(this.tasks));
 
@@ -183,18 +211,35 @@
                 this.renderTaskList();
             }
 
+            deleteTask(index) {
+                this.tasks.splice(index, 1);
+                localStorage.setItem('tasks', JSON.stringify(this.tasks));
+                this.renderTaskList();
+            }
+
             renderTaskList() {
-                this.taskListItems.innerHTML = this.tasks.map(task => `
-                    <div class="task-item">
-                        <h5>${task.name}</h5>
-                        <p>${task.description || 'Без описания'}</p>
-                        <p class="task-time">
-                            Длительность: ${this.formatDuration(task.duration)}
-                            <br>
-                            Дата: ${new Date(task.startTime).toLocaleString('ru-RU')}
-                        </p>
-                    </div>
-                `).join('');
+                this.taskListItems.innerHTML = this.tasks.map((task, index) => {
+                    const taskName = task.name.toLowerCase().trim();
+                    const bestTime = this.bestTimes[taskName];
+                    const bestTimeHtml = bestTime ? 
+                        `<br><span class="best-time">Лучшее время: ${this.formatDuration(bestTime)}</span>` : '';
+
+                    return `
+                        <div class="task-item">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <h5>${task.name}</h5>
+                                <button class="btn btn-danger btn-sm delete-btn" onclick="taskManager.deleteTask(${index})">×</button>
+                            </div>
+                            <p>${task.description || 'Без описания'}</p>
+                            <p class="task-time">
+                                Длительность: ${this.formatDuration(task.duration)}
+                                ${bestTimeHtml}
+                                <br>
+                                Дата: ${new Date(task.startTime).toLocaleString('ru-RU')}
+                            </p>
+                        </div>
+                    `;
+                }).join('');
             }
 
             formatDuration(ms) {

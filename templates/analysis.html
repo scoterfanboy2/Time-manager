@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <h2 class="mb-4">Анализ выполнения задач</h2>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Среднее время выполнения задач</h5>
+                <div id="averageTimeChart"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Прогресс по задачам</h5>
+                <div id="progressTable" class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Название задачи</th>
+                                <th>Среднее время</th>
+                                <th>Улучшение</th>
+                            </tr>
+                        </thead>
+                        <tbody id="analysisTableBody">
+                            <!-- JavaScript will populate this -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+/* Custom styles to complement Bootstrap */
+.card {
+    margin-bottom: 1.5rem;
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.bi {
+    margin-right: 0.5rem;
+}
+
+#timer {
+    font-family: monospace;
+    font-size: 1.2rem;
+}
+
+.lead a {
+    color: var(--bs-info);
+    text-decoration: none;
+}
+
+.lead a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
